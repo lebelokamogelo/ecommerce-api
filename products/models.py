@@ -55,10 +55,6 @@ class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    def save(self, *args, **kwargs):
-        self.total_amount = sum(cart_item.subtotal for cart_item in self.cartitem_set.all())
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"Cart {self.id}"
 
@@ -67,7 +63,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
         self.subtotal = self.quantity * self.product.price
