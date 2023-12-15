@@ -1,44 +1,31 @@
 from django.db import models
 from accounts.models import User
 
+
 class Addres(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     street = models.CharField(max_length=255, verbose_name='Street')
     city = models.CharField(max_length=255, verbose_name='City')
     zip_code = models.CharField(max_length=255, verbose_name='Zip Code')
 
-class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    order_date = models.DateTimeField(auto_now_add=True)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    def __str__(self):
+        return self.city
 
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
 
 class Supplier(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField(max_length=50)
     phone = models.CharField(max_length=20)
-    address = models.ForeignKey(Addres, null=True, on_delete=models.SET_NULL)
 
-class Review(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField()
-    comment = models.TextField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
 
-class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    products = models.ManyToManyField('Product')
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
 class Categorie(models.Model):
     name = models.CharField(max_length=255, verbose_name='Category')
+
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
@@ -47,3 +34,52 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField()
     category = models.ForeignKey(Categorie, null=True, on_delete=models.SET_NULL)
     supplier = models.ForeignKey(Supplier, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField()
+    comment = models.TextField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.comment[:20]
+
+
+class Cart(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    def save(self, *args, **kwargs):
+        self.total_amount = sum(cart_item.subtotal for cart_item in self.cartitem_set.all())
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Cart {self.id}"
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.subtotal = self.quantity * self.product.price
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Cart {self.id} {self.cart.user.username}"
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.ForeignKey(Addres, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.user.username
