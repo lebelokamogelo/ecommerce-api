@@ -32,7 +32,7 @@ class Product(models.Model):
     description = models.TextField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
-    category = models.ForeignKey(Categorie, null=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey(Categorie, null=True, on_delete=models.SET_NULL, default=1)
     supplier = models.ForeignKey(Supplier, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
