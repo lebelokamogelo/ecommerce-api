@@ -1,6 +1,6 @@
 from rest_framework import generics, mixins, status
-from products.models import Product, Categorie
-from .serializers import ProductSerializer, CategorySerializer
+from products.models import Product, Categorie, Review
+from .serializers import *
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -46,6 +46,30 @@ class ProductsRUD(generics.GenericAPIView, mixins.RetrieveModelMixin,
     def perform_destroy(self, instance):
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProductReview(generics.GenericAPIView, mixins.ListModelMixin):
+    queryset = Review
+    serializer_class = ReviewSerializer
+    lookup_field = 'pk'
+
+    def get_object(self):
+        return get_object_or_404(Product, pk=self.kwargs.get('pk'))
+
+    def get_queryset(self):
+        return self.get_object().review_set.all()
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user= request.user, product=self.get_object())
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class Category(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
