@@ -10,6 +10,13 @@ class Products(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateMode
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+    def get_queryset(self):
+        name = self.request.GET.get('category') or None
+        if name:
+            category = get_object_or_404(Categorie, name__icontains=name)
+            return self.queryset.filter(category=category)
+        return self.queryset.all()
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -24,7 +31,7 @@ class Products(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateMode
             return Response(status=status.HTTP_201_CREATED)
 
 
-class ProductsRUD(generics.GenericAPIView, mixins.RetrieveModelMixin,
+class ProductsReadUpdateDelete(generics.GenericAPIView, mixins.RetrieveModelMixin,
                                mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -49,7 +56,6 @@ class ProductsRUD(generics.GenericAPIView, mixins.RetrieveModelMixin,
 
 
 class ProductReview(generics.GenericAPIView, mixins.ListModelMixin):
-    queryset = Review
     serializer_class = ReviewSerializer
     lookup_field = 'pk'
 
@@ -89,7 +95,7 @@ class Category(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateMode
         return Response({serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoryRU(generics.GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin):
+class CategoryReadUpdate(generics.GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin):
     queryset = Categorie.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'name'
@@ -99,11 +105,3 @@ class CategoryRU(generics.GenericAPIView, mixins.RetrieveModelMixin, mixins.Upda
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
-
-
-class CategoryProducts(APIView):
-    def get(self, request, name, *args, **kwargs):
-        category = get_object_or_404(Categorie, name=name)
-        data = category.product_set.all()
-        serializer = ProductSerializer(data, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
