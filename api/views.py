@@ -1,5 +1,5 @@
 from rest_framework import generics, mixins, status
-from products.models import Product, Categorie, Review
+from products.models import Product, Categorie, Review, Cart, CartItem
 from .serializers import *
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -105,3 +105,41 @@ class CategoryReadUpdate(generics.GenericAPIView, mixins.RetrieveModelMixin, mix
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+
+
+class UserCart(APIView):
+    def get(self, request, *args, **kwargs):
+        cart_related_items = request.user.cart.cartitem_set.all()
+        serializer = CartSerializer(cart_related_items, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            product = Product.objects.get(pk=2) # testing
+            cart, created = Cart.objects.get_or_create(user=request.user)
+            CartItem.objects.create(cart=cart, product=product, quantity=1)
+
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_201_CREATED)
+
+class DeleteCartItems(APIView):
+    def delete(self, request, *args, **kwargs):
+        cart = Cart.objects.get(user=request.user)
+        try:
+            cart.cartitem_set.all().delete()
+        except:
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class DeleteCartItem(APIView):
+    def delete(self, request, *args, **kwargs):
+        cart = Cart.objects.get(user=request.user)
+        try:
+            cart.cartitem_set.get(pk=kwargs.get('pk')).delete()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_204_NO_CONTENT)

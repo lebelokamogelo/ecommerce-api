@@ -1,7 +1,7 @@
 from rest_framework import mixins, viewsets
 from products.models import Review
 from .serializers import ReviewSerializer
-from .permissions import OwnerByReview
+from .permissions import OwnerBy
 
 class ReviewViewSet(
         mixins.RetrieveModelMixin,
@@ -11,4 +11,4 @@ class ReviewViewSet(
 
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [OwnerByReview]
+    permission_classes = [OwnerBy]

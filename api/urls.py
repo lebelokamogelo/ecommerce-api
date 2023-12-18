@@ -9,4 +9,7 @@ urlpatterns = [
     path('', include('api.routers')),
     path('category/', views.Category.as_view(), name='category'),
     path('category/<str:name>/', views.CategoryReadUpdate.as_view()),
+    path('cart/', views.UserCart.as_view()),
+    path('cart/delete/<str:pk>/', views.DeleteCartItem.as_view()),
+    path('cart/delete', views.DeleteCartItems.as_view()),
 ]

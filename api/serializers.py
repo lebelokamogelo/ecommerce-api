@@ -46,3 +46,14 @@ class ReviewSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
             ]
+
+class CartSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    class Meta:
+        model = CartItem
+        fields = [
+            'pk',
+            'product',
+            'quantity',
+            'subtotal',
+        ]
