@@ -107,7 +107,6 @@ class CategoryReadUpdate(generics.GenericAPIView, mixins.RetrieveModelMixin, mix
         return self.update(request, *args, **kwargs)
 
 
-
 class UserCart(APIView):
     def get(self, request, *args, **kwargs):
         cart_related_items = request.user.cart.cartitem_set.all()
@@ -125,6 +124,7 @@ class UserCart(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
+
 class DeleteCartItems(APIView):
     def delete(self, request, *args, **kwargs):
         cart = Cart.objects.get(user=request.user)
@@ -134,6 +134,7 @@ class DeleteCartItems(APIView):
             return Response(status=status.HTTP_304_NOT_MODIFIED)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class DeleteCartItem(APIView):
     def delete(self, request, *args, **kwargs):
