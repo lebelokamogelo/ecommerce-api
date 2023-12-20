@@ -4,11 +4,13 @@ from .serializers import *
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 class Products(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         name = self.request.GET.get('category') or None
@@ -35,6 +37,7 @@ class ProductsReadUpdateDelete(generics.GenericAPIView, mixins.RetrieveModelMixi
                                mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -58,6 +61,7 @@ class ProductsReadUpdateDelete(generics.GenericAPIView, mixins.RetrieveModelMixi
 class ProductReview(generics.GenericAPIView, mixins.ListModelMixin):
     serializer_class = ReviewSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_object(self):
         return get_object_or_404(Product, pk=self.kwargs.get('pk'))
@@ -81,6 +85,7 @@ class ProductReview(generics.GenericAPIView, mixins.ListModelMixin):
 class Category(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     queryset = Categorie.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -99,6 +104,7 @@ class CategoryReadUpdate(generics.GenericAPIView, mixins.RetrieveModelMixin, mix
     queryset = Categorie.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'name'
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -108,6 +114,8 @@ class CategoryReadUpdate(generics.GenericAPIView, mixins.RetrieveModelMixin, mix
 
 
 class UserCart(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request, *args, **kwargs):
         cart_related_items = request.user.cart.cartitem_set.all()
         serializer = CartSerializer(cart_related_items, many=True)
@@ -126,6 +134,8 @@ class UserCart(APIView):
 
 
 class DeleteCartItems(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def delete(self, request, *args, **kwargs):
         cart = Cart.objects.get(user=request.user)
         try:
@@ -137,6 +147,8 @@ class DeleteCartItems(APIView):
 
 
 class DeleteCartItem(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def delete(self, request, *args, **kwargs):
         cart = Cart.objects.get(user=request.user)
         try:

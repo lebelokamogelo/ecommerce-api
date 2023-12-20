@@ -4,24 +4,36 @@ from rest_framework import status
 from .models import User
 from django.contrib.auth import authenticate, login, logout
 import requests
+import json
+
 
 @api_view(['POST'])
 def register(request):
     user = User.objects.create_user(**request.data)
+
     if user:
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_201_CREATED)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
 def signin(request):
-    user = authenticate(request, **request.data)
-    token = requests.post('http://127.0.0.1:8000/auth/token/', json={**request.data})
+    email = request.data.get('email')
+    password = request.data.get('password')
 
-    if user and token:
+    user = authenticate(request, email=email, password=password)
+
+    if user:
         login(request, user)
-        return Response({"token": token}, status=status.HTTP_200_OK)
+
+        token = requests.post('http://127.0.0.1:8000/auth/token/', json=request.data)
+
+        if token.status_code == 200:
+            return Response({"token": token.json().get('access')}, status=status.HTTP_200_OK)
+        else:
+             return Response({'error': 'Token retrieval failed.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     return Response({'error': 'Incorrect email or password.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
