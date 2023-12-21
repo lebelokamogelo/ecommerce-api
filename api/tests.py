@@ -1,19 +1,18 @@
 from accounts.tests import TestSetUp
 from django.urls import reverse
 from rest_framework import status
-import json
-import requests
+
 
 class CategoryTestCase(TestSetUp):
 
     def test_login(self):
-        response = self.client.post(reverse('login'), {"email": "kamogelo@email.co","password": "1234"})
+        response = self.client.post(reverse('login'), {"email": "test@example.co","password": "1234"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_token(self):
 
-        response = self.client.post(reverse('token_obtain_pair'), data = {"email": "kamogelo@email.com","password": "1234"})
+        response = self.client.post(reverse('token_obtain_pair'), data = {"email": "test@example.com","password": "1234"})
         # self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -27,7 +26,7 @@ class CategoryTestCase(TestSetUp):
 
     def test_category_post(self):
         data = {
-            'name': 'Adidas'
+            'name': 'adidas'
         }
 
         response = self.client.post(reverse('category'), data)
@@ -35,23 +34,25 @@ class CategoryTestCase(TestSetUp):
 
     def test_category_update(self):
         self.test_category_post()
-        data = {'name': "Hemisphere"}
+        data = {'name': "hemisphere"}
 
-        response = self.client.put(reverse('category_read_update', kwargs={'name': 'Adidas'}), data)
+        response = self.client.put(reverse('category_read_update', kwargs={'name': 'adidas'}), data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 class ProductTestCase(TestSetUp):
+
     def test_product_post(self):
+        CategoryTestCase.test_category_post(self)
         data = {
             "name": "Adidas",
             "description": "Best description",
             "price": "4.99",
             "quantity": "2",
-            "category": "puma"
+            "category": "adidas",
         }
 
         response = self.client.post(reverse('products'), data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_product_get(self):
         response = self.client.get(reverse('products'))
