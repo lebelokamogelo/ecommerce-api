@@ -9,7 +9,6 @@ class ReviewViewSet(
         mixins.UpdateModelMixin,
         mixins.DestroyModelMixin,
         viewsets.GenericViewSet):
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer

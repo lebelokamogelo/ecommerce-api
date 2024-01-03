@@ -48,7 +48,9 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.comment[:20]
+        if len(self.comment) > 20:
+            return self.comment[:21] + '...'
+        return self.comment
 
 
 class Cart(models.Model):
