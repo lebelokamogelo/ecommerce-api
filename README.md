@@ -50,22 +50,22 @@ Ensure the API is running, and you can start making requests to the provided end
 
 ## API Endpoints
 - **Products**
-  - `GET /products/`: Retrieve all products
-  - `GET /products/<str:pk>/`: Retrieve, Update, or Delete a specific product
-  - `GET /products/<str:pk>/reviews/`: Retrieve reviews for a product
-  - `GET /products/?category=<str:name>`: Retrieve all products for a specific category
+  - `GET /api/v1/products/`: Retrieve all products
+  - `GET /api/v1/products/<str:pk>/`: Retrieve, Update, or Delete a specific product
+  - `GET /api/v1/products/<str:pk>/reviews/`: Retrieve reviews for a product
+  - `GET /api/v1/products/?category=<str:name>`: Retrieve all products for a specific category
 - **Reviews**
-  - `GET /reviews/`: Retrieve all reviews
-  - `POST /reviews/`: Create a new review
-  - `GET /reviews/<int:pk>/`: Retrieve, Update, or Delete a specific review
+  - `GET /api/v1/reviews/`: Retrieve all reviews
+  - `POST /api/v1/reviews/`: Create a new review
+  - `GET /api/v1/reviews/<int:pk>/`: Retrieve, Update, or Delete a specific review
 - **Categories**
-  - `GET /category/`: Retrieve all categories
-  - `GET /category/<str:name>/`: Retrieve or Update a specific category
+  - `GET /api/v1/category/`: Retrieve all categories
+  - `GET /api/v1/category/<str:name>/`: Retrieve or Update a specific category
 - **User Cart**
-  - `GET /cart/`: Retrieve the user's cart
-  - `POST /cart/`: Add a product to the cart
-  - `DELETE /cart/delete/<str:pk>/`: Remove a specific item from the cart
-  - `DELETE /cart/delete/`: Remove all items from the cart
+  - `GET /api/v1/cart/`: Retrieve the user's cart
+  - `POST /api/v1/cart/`: Add a product to the cart
+  - `DELETE /api/v1/cart/delete/<str:pk>/`: Remove a specific item from the cart
+  - `DELETE /api/v1/cart/delete/`: Remove all items from the cart
 
 ## Contributing
 
