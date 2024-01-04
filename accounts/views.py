@@ -10,6 +10,7 @@ import json
 @api_view(['POST'])
 def register(request):
     user = User.objects.create_user(**request.data)
+    # user = User.objects.create_user(**request.data, is_superuser=True) # testing
 
     if user:
         return Response(status=status.HTTP_201_CREATED)

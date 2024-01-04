@@ -21,7 +21,6 @@ class CategoryTestCase(TestSetUp):
         response = self.client.get(reverse('category'))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, [])
         self.assertEqual(len(response.data), 0)
 
     def test_category_post(self):

@@ -12,7 +12,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
     class Meta:
         model = Product
         fields = [
@@ -21,7 +20,6 @@ class ProductSerializer(serializers.ModelSerializer):
             'description',
             'price',
             'quantity',
-            'category',
         ]
 
 

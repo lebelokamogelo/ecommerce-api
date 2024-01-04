@@ -7,11 +7,13 @@ from rest_framework.decorators import permission_classes
 
 from .serializers import *
 from .permissions import *
+from .pagination import *
 
 
 class Products(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    pagination_class = PageNumberPagination
 
     def get_permissions(self, *args, **kwargs):
         if self.request.method == 'POST':
@@ -74,6 +76,8 @@ class ProductsReadUpdateDelete(generics.GenericAPIView, mixins.RetrieveModelMixi
 class ProductReview(generics.GenericAPIView, mixins.ListModelMixin):
     serializer_class = ReviewSerializer
     lookup_field = 'pk'
+    pagination_class = PageNumberPagination
+
 
     def get_permissions(self):
         if self.request.method == 'POST':

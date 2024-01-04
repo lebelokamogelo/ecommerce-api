@@ -35,6 +35,9 @@ class Product(models.Model):
     category = models.ForeignKey(Categorie, null=True, on_delete=models.SET_NULL)
     supplier = models.ForeignKey(Supplier, null=True, on_delete=models.SET_NULL)
 
+    class Meta:
+        ordering = ('name', )
+
     def __str__(self):
         return self.name
 
@@ -46,6 +49,10 @@ class Review(models.Model):
     comment = models.TextField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+    class Meta:
+        ordering = ('-updated_at', )
 
     def __str__(self):
         if len(self.comment) > 20:
