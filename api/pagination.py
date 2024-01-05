@@ -1,7 +1,7 @@
-from rest_framework.pagination import PageNumberPagination as Pagination
+from rest_framework.pagination import PageNumberPagination as BasePagination
 
 
-class PageNumberPagination(Pagination):
+class PageNumberPagination(BasePagination):
     page_size = 5
     page_size_query_param = 'page_size'
     max_page_size = 100
