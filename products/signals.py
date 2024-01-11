@@ -6,7 +6,9 @@ from . import models
 @receiver(pre_save, sender=models.Cart)
 def my_cart_pre_handler(sender, instance, **kwargs):
     if instance.pk:
-        instance.total_amount = sum(cart_item.subtotal for cart_item in instance.cartitem_set.all())
+        instance.total_amount = sum(
+            cart_item.subtotal
+            for cart_item in instance.cartitem_set.all())
 
 
 @receiver(post_save, sender=models.CartItem)

@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from products.models import *
+
+from products.models import User, Product, Categorie, CartItem, Review
 from .validators import category_name
-from accounts.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
     name = serializers.CharField(validators=[category_name])
+
     class Meta:
         model = Categorie
         fields = ('name',)
@@ -25,6 +26,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField()
+
     class Meta:
         model = User
         fields = [
@@ -34,6 +36,7 @@ class UserSerializer(serializers.Serializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+
     class Meta:
         model = Review
         fields = [
@@ -45,8 +48,10 @@ class ReviewSerializer(serializers.ModelSerializer):
             'updated_at',
             ]
 
+
 class CartSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
+
     class Meta:
         model = CartItem
         fields = [

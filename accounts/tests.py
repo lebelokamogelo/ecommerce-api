@@ -1,7 +1,7 @@
-from rest_framework.test import APITestCase
 from django.urls import reverse
-from rest_framework import status
-import json
+from rest_framework.test import APITestCase
+
+from .models import User
 
 
 class TestSetUp(APITestCase):
@@ -12,6 +12,9 @@ class TestSetUp(APITestCase):
             "password": "1234"
         }
 
-        response = self.client.post(reverse('register'), data)
+        self.client.post(reverse('register'), data)
 
-        self.client.login(email = "test@example.com", password = "1234")
+        self.client.login(email="test@example.com", password="1234")
+
+    def test_model(self):
+        self.assertEqual(str(User.objects.first()), "test")

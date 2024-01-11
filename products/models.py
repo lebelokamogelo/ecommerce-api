@@ -32,8 +32,10 @@ class Product(models.Model):
     description = models.TextField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
-    category = models.ForeignKey(Categorie, null=True, on_delete=models.SET_NULL)
-    supplier = models.ForeignKey(Supplier, null=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey(Categorie, null=True,
+                                 on_delete=models.SET_NULL)
+    supplier = models.ForeignKey(Supplier, null=True,
+                                 on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ('name', )
@@ -50,7 +52,6 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     class Meta:
         ordering = ('-updated_at', )
 
@@ -62,7 +63,8 @@ class Review(models.Model):
 
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_amount = models.DecimalField(max_digits=10,
+                                       decimal_places=2, default=0.00)
 
     def __str__(self):
         return f"Cart {self.id}"
@@ -72,7 +74,8 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    subtotal = models.DecimalField(max_digits=10,
+                                   decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
         self.subtotal = self.quantity * self.product.price

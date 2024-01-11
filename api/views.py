@@ -1,16 +1,19 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
+                                        IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import permission_classes
 
-from .serializers import *
-from .permissions import *
-from .pagination import *
+from products.models import Product, Categorie, Cart, CartItem
+from .pagination import PageNumberPagination
+from .permissions import IsAdmin, IsAdminOrManager, IsCustomer
+from .serializers import (CategorySerializer, ProductSerializer,
+                          CartSerializer, ReviewSerializer)
 
 
-class Products(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+class Products(generics.GenericAPIView, mixins.ListModelMixin,
+               mixins.CreateModelMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = PageNumberPagination
@@ -33,7 +36,6 @@ class Products(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateMode
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-
     def perform_create(self, serializer):
         if serializer.is_valid():
             category = self.request.data.get('category')
@@ -42,8 +44,10 @@ class Products(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateMode
             return Response(status=status.HTTP_201_CREATED)
 
 
-class ProductsReadUpdateDelete(generics.GenericAPIView, mixins.RetrieveModelMixin,
-                               mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+class ProductsReadUpdateDelete(generics.GenericAPIView,
+                               mixins.RetrieveModelMixin,
+                               mixins.UpdateModelMixin,
+                               mixins.DestroyModelMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
@@ -78,7 +82,6 @@ class ProductReview(generics.GenericAPIView, mixins.ListModelMixin):
     lookup_field = 'pk'
     pagination_class = PageNumberPagination
 
-
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsCustomer()]
@@ -94,16 +97,16 @@ class ProductReview(generics.GenericAPIView, mixins.ListModelMixin):
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        data = request.data
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user= request.user, product=self.get_object())
+            serializer.save(user=request.user, product=self.get_object())
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class Category(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+class Category(generics.GenericAPIView, mixins.ListModelMixin,
+               mixins.CreateModelMixin):
     queryset = Categorie.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAdminOrManager]
@@ -118,10 +121,13 @@ class Category(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateMode
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
-        return Response({serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({serializer.errors},
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoryReadUpdate(generics.GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin):
+class CategoryReadUpdate(generics.GenericAPIView,
+                         mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin):
     queryset = Categorie.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'name'
@@ -144,12 +150,12 @@ class UserCart(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            product = Product.objects.get(pk=2) # testing
+            product = Product.objects.get(pk=2)
             cart, created = Cart.objects.get_or_create(user=request.user)
             CartItem.objects.create(cart=cart, product=product, quantity=1)
 
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -161,8 +167,8 @@ class DeleteCartItems(APIView):
         cart = Cart.objects.get(user=request.user)
         try:
             cart.cartitem_set.all().delete()
-        except:
-            return Response(status=status.HTTP_304_NOT_MODIFIED)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_304_NOT_MODIFIED)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -174,6 +180,6 @@ class DeleteCartItem(APIView):
         cart = Cart.objects.get(user=request.user)
         try:
             cart.cartitem_set.get(pk=kwargs.get('pk')).delete()
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)

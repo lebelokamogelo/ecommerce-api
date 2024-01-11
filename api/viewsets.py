@@ -1,8 +1,9 @@
 from rest_framework import mixins, viewsets
+
 from products.models import Review
-from .serializers import ReviewSerializer
 from .permissions import OwnerBy
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .serializers import ReviewSerializer
+
 
 class ReviewViewSet(
         mixins.RetrieveModelMixin,
