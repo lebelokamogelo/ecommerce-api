@@ -10,8 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-from pathlib import Path
+import os
 from datetime import timedelta
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,6 +52,7 @@ INSTALLED_APPS = [
     # Installed apps
     'rest_framework',
     'rest_framework_simplejwt',
+    'algoliasearch_django',
 ]
 
 MIDDLEWARE = [
@@ -149,4 +156,9 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+ALGOLIA = {
+    'APPLICATION_ID': os.getenv('ALGOLIA_APPLICATION_ID'),
+    'API_KEY': os.getenv('ALGOLIA_API_KEY'),
 }
