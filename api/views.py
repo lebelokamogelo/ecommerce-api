@@ -150,9 +150,11 @@ class UserCart(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            product = Product.objects.get(pk=2)
+            pk = request.data.get('pk')
+            quantity = request.data.get('quantity')
+            product = Product.objects.get(pk=pk)
             cart, created = Cart.objects.get_or_create(user=request.user)
-            CartItem.objects.create(cart=cart, product=product, quantity=1)
+            CartItem.objects.create(cart=cart, product=product, quantity=int(quantity))
 
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
