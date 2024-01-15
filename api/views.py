@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from products.models import Product, Categorie, Cart, CartItem
+from .client import search
 from .pagination import PageNumberPagination
 from .permissions import IsAdmin, IsAdminOrManager, IsCustomer
 from .serializers import (CategorySerializer, ProductSerializer,
@@ -28,6 +29,11 @@ class Products(generics.GenericAPIView, mixins.ListModelMixin,
         if name:
             category = get_object_or_404(Categorie, name__icontains=name)
             return self.queryset.filter(category=category)
+
+        query = self.request.GET.get('query')
+        if query:
+            return search(query).get('hits')
+
         return self.queryset.all()
 
     def get(self, request, *args, **kwargs):
@@ -154,7 +160,8 @@ class UserCart(APIView):
             quantity = request.data.get('quantity')
             product = Product.objects.get(pk=pk)
             cart, created = Cart.objects.get_or_create(user=request.user)
-            CartItem.objects.create(cart=cart, product=product, quantity=int(quantity))
+            CartItem.objects.create(cart=cart, product=product,
+                                    quantity=int(quantity))
 
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)

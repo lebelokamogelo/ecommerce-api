@@ -49,8 +49,9 @@ Welcome to the E-Commerce API, a robust backend solution for managing products, 
 Ensure the API is running, and you can start making requests to the provided endpoints. The API supports various operations, including product management, category operations, user cart actions, and user authentication.
 
 ### API Endpoints
-- **Products**
-  - `GET /api/v1/products/`: Retrieve all products
+
+- **Products**produ
+    - `GET /api/v1/products/?query=product`: Retrieve all products
   - `GET /api/v1/products/<str:pk>/`: Retrieve, Update, or Delete a specific product
   - `GET /api/v1/products/<str:pk>/reviews/`: Retrieve reviews for a product
   - `GET /api/v1/products/?category=<str:name>`: Retrieve all products for a specific category
