@@ -1,21 +1,21 @@
-# E-Commerce API
+## Ecommerce API
 
 Welcome to the E-Commerce API, a robust backend solution for managing products, categories, user carts, and more. This API is designed to power your e-commerce platform with essential features.
 
-## Table of Contents
+### Table of Contents
 1. [Features](#features)
 2. [Installation](#installation)
 3. [API Endpoints](#api-endpoints)
 4. [Contributing](#contributing)
 
-## Features
+### Features
 - Manage Products and Product Reviews
 - Categories for better organization
 - User Cart functionality for a seamless shopping experience
 - User Registration and Authentication
 - Token-based Authentication for secure API access
 
-## Installation
+### Installation
 1. Clone the repository:
     ```bash
     git clone https://github.com/lebelokamogelo/ecommerce-api.git
@@ -48,7 +48,7 @@ Welcome to the E-Commerce API, a robust backend solution for managing products, 
     ```
 Ensure the API is running, and you can start making requests to the provided endpoints. The API supports various operations, including product management, category operations, user cart actions, and user authentication.
 
-## API Endpoints
+### API Endpoints
 - **Products**
   - `GET /api/v1/products/`: Retrieve all products
   - `GET /api/v1/products/<str:pk>/`: Retrieve, Update, or Delete a specific product
@@ -67,6 +67,6 @@ Ensure the API is running, and you can start making requests to the provided end
   - `DELETE /api/v1/cart/delete/<str:pk>/`: Remove a specific item from the cart
   - `DELETE /api/v1/cart/delete/`: Remove all items from the cart
 
-## Contributing
+### Contributing
 
 Contributions are welcome! Feel free to open issues, create pull requests, or suggest improvements.
